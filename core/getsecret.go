@@ -8,23 +8,6 @@ import (
 	"strings"
 )
 
-type metadata struct {
-	Name      string `json:"Name"`
-	Namespace string `json:"namespace"`
-}
-type Secret struct {
-	APIVersion string            `json:"apiVersion"`
-	Type       string            `json:"type"`
-	Kind       string            `json:"kind"`
-	Metadata   metadata          `json:"metadata"`
-	Data       map[string]string `json:"data"`
-}
-
-type secrets struct {
-	APIVersion string   `json:"apiVersion"`
-	Items      []Secret `json:"Items"`
-}
-
 // GetSecrets Executes the kubectl command line
 func GetSecrets(namespace string) {
 	log.Println("Executing kubectl")
@@ -62,7 +45,7 @@ func GetSecretsByNamespaceAndName(namespace, secretName string) (Secret, error) 
 	out, _ := exec.Command("kubectl", "get", "secret", "--namespace", namespace, secretName, "-o", "json").CombinedOutput()
 	var secretRetrieved Secret
 	if strings.Contains(string(out), "Error from server (NotFound)") {
-		return Secret{}, errors.New(string(out))
+		return Secret{}, errors.New("Could not find the secret")
 	}
 	if err := json.Unmarshal(out, &secretRetrieved); err != nil {
 		return Secret{}, err
