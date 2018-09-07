@@ -8,6 +8,8 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
+//ReadSecretFromFile takes a filename and reads the values to generate
+//a Secret type struct.
 func ReadSecretFromFile(filename string) (Secret, error) {
 	_, err := os.Stat(filename)
 	if os.IsNotExist(err) {

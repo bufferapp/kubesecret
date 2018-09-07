@@ -5,6 +5,8 @@ type metadata struct {
 	Namespace string `json:"namespace"`
 }
 
+//Secret is the main type that has all the information we care about in a
+//secret file. It can be used to regenerate a secret document afresh.
 type Secret struct {
 	APIVersion string            `json:"apiVersion"`
 	Type       string            `json:"type"`
