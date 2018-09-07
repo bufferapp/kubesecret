@@ -3,6 +3,7 @@ package cmd
 import (
 	"fmt"
 	"log"
+	"os"
 	"os/exec"
 
 	"github.com/bufferapp/kubesecret/core"
@@ -14,16 +15,17 @@ var applyCmd = &cobra.Command{
 	Short: "Checks for conflicts and applies the changes in a given secret file to kubernetes",
 	Run: func(cmd *cobra.Command, args []string) {
 		secretFromFile, err := core.ReadSecretFromFile(args[0])
+		var answer []byte
 		if err != nil {
 			log.Println("Something went wrong while reading the file")
 			log.Fatalln(err)
 		}
 		fmt.Println("Secret read from file. Checking the matching remote resource now.")
-		_, err = core.GetSecretsByNamespaceAndName(secretFromFile.Metadata.Namespace, secretFromFile.Metadata.Name)
+		secretFromServer, err := core.GetSecretsByNamespaceAndName(secretFromFile.Metadata.Namespace, secretFromFile.Metadata.Name)
 
 		if err != nil {
 			if err.Error() == "Could not find the secret" {
-				var answer []byte
+
 				keyAndData := ""
 				for k, v := range secretFromFile.Data {
 					keyAndData += "  " + k + ": " + v
@@ -48,6 +50,29 @@ Are you sure you wish to create this secret newly? (y/n): `, secretFromFile.Meta
 					fmt.Println("Cancelling applying secret")
 				}
 			}
+		} else {
+			changes := core.CompareSecrets(secretFromFile, secretFromServer)
+			if changes["removals"] != "" {
+				fmt.Printf("Please review the below warnings:\n%s", changes["removals"])
+				fmt.Printf("\n\nDo you wish to proceed with these values being removed? (y/n): ")
+				fmt.Scanln(&answer)
+				if string(answer) == "n" {
+					fmt.Printf("Cancelling applying changes\n")
+					os.Exit(0)
+				}
+			}
+			fmt.Println("Changes:\n\n" + changes["changes"])
+			fmt.Println("Additions:\n\n" + changes["additions"])
+			fmt.Printf("Do you wish to proceed with applying these changes? (y/n): ")
+			fmt.Scanln(&answer)
+			if string(answer) == "y" {
+				fmt.Println("Applying the changes")
+				out, _ := exec.Command("kubectl", "apply", "-f", args[0]).CombinedOutput()
+				fmt.Printf(string(out))
+			} else {
+				fmt.Println("Cancelling applying secret")
+			}
+
 		}
 
 	},
