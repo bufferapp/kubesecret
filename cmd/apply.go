@@ -20,7 +20,7 @@ var applyCmd = &cobra.Command{
 			log.Println("Something went wrong while reading the file")
 			log.Fatalln(err)
 		}
-		fmt.Println("Secret read from file. Checking the matching remote resource now.")
+		fmt.Println("Secret read from file. Checking the matching remote resource now.\n")
 		secretFromServer, err := core.GetSecretsByNamespaceAndName(secretFromFile.Metadata.Namespace, secretFromFile.Metadata.Name)
 
 		if err != nil {
@@ -61,8 +61,12 @@ Are you sure you wish to create this secret newly? (y/n): `, secretFromFile.Meta
 					os.Exit(0)
 				}
 			}
-			fmt.Println("Changes:\n\n" + changes["changes"])
-			fmt.Println("Additions:\n\n" + changes["additions"])
+			if changes["changes"] != "" {
+				fmt.Println("Changes:\n" + changes["changes"])
+			}
+			if changes["additions"] != "" {
+				fmt.Println("Additions:\n" + changes["additions"])
+			}
 			fmt.Printf("Do you wish to proceed with applying these changes? (y/n): ")
 			fmt.Scanln(&answer)
 			if string(answer) == "y" {
