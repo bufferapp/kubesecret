@@ -20,7 +20,7 @@ var applyCmd = &cobra.Command{
 			log.Println("Something went wrong while reading the file")
 			log.Fatalln(err)
 		}
-		fmt.Println("Secret read from file. Checking the matching remote resource now.")
+		//fmt.Println("Secret read from file. Checking the matching remote resource now.\n")
 		secretFromServer, err := core.GetSecretsByNamespaceAndName(secretFromFile.Metadata.Namespace, secretFromFile.Metadata.Name)
 
 		if err != nil {
@@ -52,18 +52,23 @@ Are you sure you wish to create this secret newly? (y/n): `, secretFromFile.Meta
 			}
 		} else {
 			changes := core.CompareSecrets(secretFromFile, secretFromServer)
-			if changes["removals"] != "" {
-				fmt.Printf("Please review the below warnings:\n%s", changes["removals"])
-				fmt.Printf("\n\nDo you wish to proceed with these values being removed? (y/n): ")
+			if changes["warnings"] != "" {
+				fmt.Printf("Please review the warnings below.\n%s", changes["warnings"])
+				fmt.Printf("\n\nSafe to proceed? (y/n): ")
 				fmt.Scanln(&answer)
 				if string(answer) == "n" {
 					fmt.Printf("Cancelling applying changes\n")
 					os.Exit(0)
 				}
+				fmt.Printf("Please review the changes below.\n")
 			}
-			fmt.Println("Changes:\n\n" + changes["changes"])
-			fmt.Println("Additions:\n\n" + changes["additions"])
-			fmt.Printf("Do you wish to proceed with applying these changes? (y/n): ")
+			if changes["changes"] != "" {
+				fmt.Println("Changes:\n" + changes["changes"])
+			}
+			if changes["additions"] != "" {
+				fmt.Println("Additions:\n" + changes["additions"])
+			}
+			fmt.Printf("Apply these changes? (y/n): ")
 			fmt.Scanln(&answer)
 			if string(answer) == "y" {
 				fmt.Println("Applying the changes")

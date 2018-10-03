@@ -13,7 +13,7 @@ import (
 
 var namespace string
 var secretKey string
-var allKeys bool
+var onlyKeys bool
 
 var getCmd = &cobra.Command{
 	Use:   "get",
@@ -28,23 +28,23 @@ var getCmd = &cobra.Command{
 			sort.Strings(keys)
 
 			if secretKey == "" {
-				if allKeys {
-					fmt.Printf("List of keys with associated values\n\n")
+				if !onlyKeys {
+					fmt.Printf("Data with values:\n")
 					for _, k := range keys {
 						value, err := base64.StdEncoding.DecodeString(s.Data[k])
 						if err != nil {
 							log.Fatalln(err)
 						} else {
-							fmt.Printf("%s: %s\n ------------ \n", k, value)
+							fmt.Printf("  * %s: %s\n", k, value)
 						}
 					}
-					fmt.Printf("\n\n")
+					fmt.Printf("\n")
 				}
-				fmt.Printf("List of all keys for %s\n\n", args[0])
+				fmt.Printf("List of only key names:\n")
 				for _, k := range keys {
-					fmt.Printf("%s\n", k)
+					fmt.Printf("  * %s\n", k)
 				}
-				fmt.Printf("\n\nUse kubesecret get %s -k key --namespace %s to print the value for a specific key\n", args[0], namespace)
+				fmt.Printf("\nUse kubesecret get %s -k key --namespace %s to print the value for a specific key\n", args[0], namespace)
 			} else {
 				found := false
 				for k, v := range s.Data {
@@ -77,6 +77,6 @@ func init() {
 	rootCmd.AddCommand(getCmd)
 	getCmd.Flags().StringVarP(&namespace, "namespace", "n", "", "Namespace to search for secret in. (Required)")
 	getCmd.Flags().StringVarP(&secretKey, "key", "k", "", "Specific key value to get")
-	getCmd.Flags().BoolVar(&allKeys, "all-keys", false, "List the values of all the keys")
+	getCmd.Flags().BoolVar(&onlyKeys, "only-keys", false, "Only print the list of keys without their values")
 	getCmd.MarkFlagRequired("namespace")
 }
