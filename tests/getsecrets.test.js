@@ -1,4 +1,4 @@
-const getSecret = require('../lib/getsecrets.js');
+const processsecret = require('../lib/processsecret.js');
 
 test('Expect correct value for an empty reply from kubectl', () => {
   const kubernetesOutput = {
@@ -13,7 +13,7 @@ test('Expect correct value for an empty reply from kubectl', () => {
     }),
     stderr: '',
   };
-  expect(getSecret.getSecrets(kubernetesOutput))
+  expect(processsecret.processSecrets(kubernetesOutput))
     .toEqual({
       result: 'No secrets found',
       reason: '',
@@ -26,7 +26,7 @@ test('Expect notifying of error', () => {
     stdout: '',
     stderr: 'Unable to connect to the server: dial tcp 111.111.111.111:443: i/o timeout\n',
   };
-  expect(getSecret.getSecrets(kubernetesOutput))
+  expect(processsecret.processSecrets(kubernetesOutput))
     .toEqual({
       result: 'error',
       reason: 'Unable to connect to the server: dial tcp 111.111.111.111:443: i/o timeout',
@@ -104,6 +104,7 @@ test('Expect correct formatting when actual objects are present', () => {
     secrets: {
       'test-a': {
         metadata: {
+          name: 'test-a',
           namespace: 'test',
         },
         data: {
@@ -123,6 +124,7 @@ test('Expect correct formatting when actual objects are present', () => {
       },
       'test-b': {
         metadata: {
+          name: 'test-b',
           namespace: 'test',
         },
         data: {
@@ -134,6 +136,7 @@ test('Expect correct formatting when actual objects are present', () => {
       },
       'test-c': {
         metadata: {
+          name: 'test-c',
           namespace: 'test',
         },
         data: {
@@ -145,7 +148,7 @@ test('Expect correct formatting when actual objects are present', () => {
       },
     },
   };
-  expect(getSecret.getSecrets(kubernetesOutput))
+  expect(processsecret.processSecrets(kubernetesOutput))
     .toEqual(expectedOutput);
 });
 
@@ -278,6 +281,7 @@ test('Expect non Opaque type secrets to be excluded', () => {
     secrets: {
       'test-a': {
         metadata: {
+          name: 'test-a',
           namespace: 'test',
         },
         data: {
@@ -297,6 +301,7 @@ test('Expect non Opaque type secrets to be excluded', () => {
       },
       'test-b': {
         metadata: {
+          name: 'test-b',
           namespace: 'test',
         },
         data: {
@@ -308,6 +313,7 @@ test('Expect non Opaque type secrets to be excluded', () => {
       },
       'test-c': {
         metadata: {
+          name: 'test-c',
           namespace: 'test',
         },
         data: {
@@ -319,7 +325,7 @@ test('Expect non Opaque type secrets to be excluded', () => {
       },
     },
   };
-  expect(getSecret.getSecrets(kubernetesOutput))
+  expect(processsecret.processSecrets(kubernetesOutput))
     .toEqual(expectedOutput);
 });
 
@@ -401,6 +407,68 @@ test('Expect to be alerted when no Opaque secrets are present', () => {
     reason: 'No Opaque type secrets found',
     secrets: {},
   };
-  expect(getSecret.getSecrets(kubernetesOutput))
+  expect(processsecret.processSecrets(kubernetesOutput))
     .toEqual(expectedOutput);
+});
+
+
+test('Expect correct error message when secret does not exist', () => {
+  const kubernetesOutput = {
+    stdout: '',
+    stderr: 'Error from server (NotFound): secrets "a-new-secreta" not found\n',
+  };
+  expect(processsecret.processSingleSecret(kubernetesOutput))
+    .toEqual({
+      result: 'error',
+      reason: 'Error from server (NotFound): secrets "a-new-secreta" not found',
+      secret: {},
+    });
+});
+
+test('Expect single secret to be processed correctly', () => {
+  const kubernetesOutput = {
+    stdout: JSON.stringify({
+      apiVersion: 'v1',
+      data: {
+        asecret: 'aGVsbG8=',
+        bsecret: 'd29ybGQ=',
+      },
+      kind: 'Secret',
+      metadata: {
+        annotations: {
+          'kubectl.kubernetes.io/last-applied-configuration': '{"apiVersion":"v1","data":{"asecret":"aGVsbG8=","bsecret":"d29ybGQ="},"kind":"Secret","metadata":{"annotations":{},"name":"a-new-secret","namespace":"test"},"type":"Opaque"}\n',
+        },
+        creationTimestamp: '2019-02-12T00:23:46Z',
+        name: 'a-new-secret',
+        namespace: 'test',
+        resourceVersion: '362323657',
+        selfLink: '/api/v1/namespaces/test/secrets/a-new-secret',
+        uid: '123456789-1',
+      },
+      type: 'Opaque',
+    }),
+    stderr: '',
+  };
+  const expectedResult = {
+    result: 'success',
+    reason: '',
+    secret: {
+      metadata: {
+        name: 'a-new-secret',
+        namespace: 'test',
+      },
+      data: {
+        asecret: {
+          encoded: 'aGVsbG8=',
+          decoded: 'hello',
+        },
+        bsecret: {
+          encoded: 'd29ybGQ=',
+          decoded: 'world',
+        }
+      }
+    }
+  }
+  expect(processsecret.processSingleSecret(kubernetesOutput))
+    .toEqual(expectedResult);
 });
