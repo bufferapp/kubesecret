@@ -14,10 +14,14 @@
     "eslint": "^5.13.0",
     "eslint-config-airbnb-base": "^13.1.0",
     "eslint-plugin-import": "^2.16.0",
+    "eslint-plugin-jest": "^22.3.0",
+    "jest": "^24.1.0",
     "pkg": "^4.3.7"
   },
   "scripts": {
-    "build": "pkg -t node10-linux-x64,node10-macos-x64 -o ./bin/kubesecret package.json"
+    "test": "jest",
+    "build": "pkg -t node10-linux-x64,node10-macos-x64 -o ./bin/kubesecret package.json",
+    "watchLinux": "while inotifywait -q -r -e modify ./lib ./tests; do npm run test; done;"
   },
   "bin": "scripts/kubesecret.js",
   "pkg": {
