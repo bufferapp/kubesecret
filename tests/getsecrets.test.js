@@ -465,10 +465,10 @@ test('Expect single secret to be processed correctly', () => {
         bsecret: {
           encoded: 'd29ybGQ=',
           decoded: 'world',
-        }
-      }
-    }
-  }
+        },
+      },
+    },
+  };
   expect(processsecret.processSingleSecret(kubernetesOutput))
     .toEqual(expectedResult);
 });
