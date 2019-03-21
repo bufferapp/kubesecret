@@ -9,7 +9,7 @@ test('Kube converts a secret correctly back to YAML', () => {
       },
       data: {
         asecret: {
-          encoded: 'b2xh=',
+          encoded: 'b2xh',
           decoded: 'ola',
         },
         bsecret: {
@@ -21,12 +21,12 @@ test('Kube converts a secret correctly back to YAML', () => {
   }))
     .toEqual(`apiVersion: v1
 kind: Secret
+type: Opaque
 metadata:
   name: a-new-secret
-  namespace: a-new-secret
-  type: Opaque
+  namespace: test
 data:
-  asecret: b2xh=
+  asecret: b2xh
   bsecret: d29ybGQ=
 `);
 });

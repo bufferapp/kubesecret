@@ -96,8 +96,8 @@ test('Expect final return value to strip newlines', () => {
 });
 
 // test('Can mock kube', () => {
-//   kube.getResource.mockReturnValueOnce(1);
-//   kube.getResource.mockReturnValueOnce(3);
+//   kube.getSingleSecret.mockReturnValueOnce(1);
+//   kube.getSingleSecret.mockReturnValueOnce(3);
 //   expect(editsecret.completeEdit({}))
 //     .toBe(3);
 // });
@@ -107,7 +107,7 @@ test('Expect secret application to pass when secret on server has not changed', 
     result: 'success',
   });
 
-  kube.getResource.mockReturnValueOnce({
+  kube.getSingleSecret.mockReturnValueOnce({
     result: 'success',
     reason: '',
     secret: {
@@ -150,8 +150,8 @@ test('Expect secret application to pass when secret on server has not changed', 
     .toEqual({
       result: 'Applied',
     });
-  expect(kube.getResource.mock.calls.length).toBe(1);
-  expect(kube.getResource.mock.calls[0])
+  expect(kube.getSingleSecret.mock.calls.length).toBe(1);
+  expect(kube.getSingleSecret.mock.calls[0])
     .toEqual([{
       namespace: 'test',
       name: 'a-new-secret',
@@ -179,8 +179,8 @@ test('Expect secret application to pass when secret on server has not changed', 
 });
 
 test('Expect secret to not be applied when value has changed', () => {
-  kube.getResource.mockClear();
-  kube.getResource.mockReturnValueOnce({
+  kube.getSingleSecret.mockClear();
+  kube.getSingleSecret.mockReturnValueOnce({
     result: 'success',
     reason: '',
     secret: {
@@ -243,5 +243,5 @@ test('Expect secret to not be applied when value has changed', () => {
       newValue: 'hi',
       previousValue: 'hello',
     });
-  expect(kube.getResource.mock.calls.length).toBe(1);
+  expect(kube.getSingleSecret.mock.calls.length).toBe(1);
 });
