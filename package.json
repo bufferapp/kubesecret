@@ -21,7 +21,8 @@
   "scripts": {
     "test": "jest",
     "build": "pkg -t node10-linux-x64,node10-macos-x64 -o ./bin/kubesecret package.json",
-    "watchLinux": "while inotifywait -q -r -e modify ./lib ./tests; do npm run test; done;"
+    "watchLinux": "while inotifywait -q -r -e modify ./lib ./tests; do npm run test; done;",
+    "watchMac": "fswatch -r $(pwd) -e '\\.git/' -e 'node_modules/' -x | (while read; do npm run test; done)"
   },
   "bin": "scripts/kubesecret.js",
   "pkg": {
