@@ -218,7 +218,7 @@ test('Expect secret to not be applied when value has changed', () => {
       },
     },
     updatingKey: 'asecret',
-    newValue: 'hi',
+    newValue: 'greetings',
   }))
     .toEqual({
       result: 'Failed',
@@ -240,7 +240,7 @@ test('Expect secret to not be applied when value has changed', () => {
         },
       },
       updatingKey: 'asecret',
-      newValue: 'hi',
+      newValue: 'greetings',
       previousValue: 'hello',
     });
   expect(kube.getSingleSecret.mock.calls.length).toBe(1);
