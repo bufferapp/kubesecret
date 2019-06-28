@@ -266,6 +266,20 @@ test('Expect non Opaque type secrets to be excluded', () => {
           },
           type: 'Opaque',
         },
+        {
+          apiVersion: 'v1',
+          data: {},
+          kind: 'Secret',
+          metadata: {
+            creationTimestamp: '2017-11-10T21:14:32Z',
+            name: 'test-d',
+            namespace: 'test',
+            resourceVersion: '237223521',
+            selfLink: '/api/v1/namespaces/test/secrets/test-d',
+            uid: '123456789-7',
+          },
+          type: 'Opaque',
+        },
       ],
       kind: 'List',
       metadata: {
@@ -321,6 +335,14 @@ test('Expect non Opaque type secrets to be excluded', () => {
             encoded: 'VGhpcyBjZXJ0IGRvZXMgbm90IGV4aXN0',
             decoded: 'This cert does not exist',
           },
+        },
+      },
+      'test-d': {
+        metadata: {
+          name: 'test-d',
+          namespace: 'test',
+        },
+        data: {
         },
       },
     },
@@ -467,6 +489,38 @@ test('Expect single secret to be processed correctly', () => {
           decoded: 'world',
         },
       },
+    },
+  };
+  expect(processsecret.processSingleSecret(kubernetesOutput))
+    .toEqual(expectedResult);
+});
+
+test('Expect single secret with no data to be processed correctly', () => {
+  const kubernetesOutput = {
+    stdout: JSON.stringify({
+      apiVersion: 'v1',
+      kind: 'Secret',
+      metadata: {
+        creationTimestamp: '2019-02-12T00:23:46Z',
+        name: 'a-new-secret',
+        namespace: 'test',
+        resourceVersion: '362323657',
+        selfLink: '/api/v1/namespaces/test/secrets/a-new-secret',
+        uid: '123456789-1',
+      },
+      type: 'Opaque',
+    }),
+    stderr: '',
+  };
+  const expectedResult = {
+    result: 'success',
+    reason: '',
+    secret: {
+      metadata: {
+        name: 'a-new-secret',
+        namespace: 'test',
+      },
+      data: {},
     },
   };
   expect(processsecret.processSingleSecret(kubernetesOutput))
