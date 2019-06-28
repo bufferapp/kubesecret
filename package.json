@@ -5,18 +5,18 @@
   "main": "\"\"",
   "dependencies": {
     "chalk": "^2.4.2",
-    "commander": "^2.19.0",
-    "inquirer": "^6.2.2",
-    "js-yaml": "^3.12.1",
+    "commander": "^2.20.0",
+    "inquirer": "^6.4.1",
+    "js-yaml": "^3.13.1",
     "shelljs": "^0.8.3"
   },
   "devDependencies": {
-    "eslint": "^5.13.0",
+    "eslint": "^5.16.0",
     "eslint-config-airbnb-base": "^13.1.0",
-    "eslint-plugin-import": "^2.16.0",
-    "eslint-plugin-jest": "^22.3.0",
-    "jest": "^24.1.0",
-    "pkg": "^4.3.7"
+    "eslint-plugin-import": "^2.18.0",
+    "eslint-plugin-jest": "^22.7.1",
+    "jest": "^24.8.0",
+    "pkg": "^4.4.0"
   },
   "scripts": {
     "test": "jest",
