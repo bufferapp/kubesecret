@@ -1,0 +1,44 @@
+{
+  "name": "kubesecret",
+  "version": "0.4.0-rc1",
+  "description": "A CLI utility to manage secrets in kubernetes",
+  "main": "\"\"",
+  "dependencies": {
+    "chalk": "^2.4.2",
+    "commander": "^2.19.0",
+    "inquirer": "^6.2.2",
+    "js-yaml": "^3.12.1",
+    "shelljs": "^0.8.3"
+  },
+  "devDependencies": {
+    "eslint": "^5.13.0",
+    "eslint-config-airbnb-base": "^13.1.0",
+    "eslint-plugin-import": "^2.16.0",
+    "eslint-plugin-jest": "^22.3.0",
+    "jest": "^24.1.0",
+    "pkg": "^4.3.7"
+  },
+  "scripts": {
+    "test": "jest",
+    "build": "pkg -t node10-linux-x64,node10-macos-x64 -o ./bin/kubesecret package.json",
+    "watchLinux": "while inotifywait -q -r -e modify ./lib ./tests; do npm run test; done;",
+    "watchMac": "fswatch -r $(pwd) -e '\\.git/' -e 'node_modules/' -x | (while read; do npm run test; done)"
+  },
+  "bin": "scripts/kubesecret.js",
+  "pkg": {
+    "scripts": [
+      "./scripts/kubesecret*.js",
+      "./lib/*.js"
+    ]
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bufferapp/kubesecret.git"
+  },
+  "author": "Buffer Inc",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/bufferapp/kubesecret/issues"
+  },
+  "homepage": "https://github.com/bufferapp/kubesecret#readme"
+}
