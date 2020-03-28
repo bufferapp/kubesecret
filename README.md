@@ -44,3 +44,24 @@ While Windows support is currently not supported, we'll be taking care to try an
 * Code away
 * To test changes without building the binary run `node scripts/kubesecret.js`
 * Install it globally on your machine using `npm link`
+
+### Publish to npm
+
+Use `npm version` to update the version name, add a commit and tag that commit prior to publishing.
+For example:
+
+```
+npm version 0.5.0
+npm publish
+```
+
+Or if you want to publish a beta version, manually update the `package.json` version
+(e.g. `0.5.0-beta1`) and run this command:
+
+```
+npm publish --tag beta
+```
+
+## License
+
+MIT
