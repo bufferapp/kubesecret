@@ -6,8 +6,10 @@ program
   .option('-n --namespace <namespace>', 'Namespace to filter by')
   .arguments('[secret-name]')
   .action((secretName) => {
-    console.log(`Working with namespace ${program.namespace}`);
-    interactiveget.beginWithNamespace({ namespace: program.namespace });
+    interactiveget.beginWithNamespace({
+      namespace: program.namespace,
+      secretName,
+    });
   });
 
 program.parse(process.argv);
