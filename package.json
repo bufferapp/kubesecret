@@ -1,5 +1,5 @@
 {
-  "name": "kubesecret",
+  "name": "@bufferapp/kubesecret",
   "version": "0.4.0",
   "description": "A CLI utility to manage secrets in kubernetes",
   "main": "\"\"",
@@ -24,7 +24,9 @@
     "watchLinux": "while inotifywait -q -r -e modify ./lib ./tests; do npm run test; done;",
     "watchMac": "fswatch -r $(pwd) -e '\\.git/' -e 'node_modules/' -x | (while read; do npm run test; done)"
   },
-  "bin": "scripts/kubesecret.js",
+  "bin": {
+    "kubesecret": "scripts/kubesecret.js"
+  },
   "pkg": {
     "scripts": [
       "./scripts/kubesecret*.js",
