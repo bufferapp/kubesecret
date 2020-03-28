@@ -14,7 +14,17 @@ We are making `kubesecret` to give team members a guided approach to performing 
 
 **Please note that this tool runs ON TOP of `kubectl`. You need to have `kubectl` installed and running on your OS before using this tool**
 
-* Go to the releases, and download the binary for the OS of your choice. 
+### npm
+
+```
+npm install -g @bufferapp/kubesecret
+```
+
+Now run `kubesecret help` to explore what you can do!
+
+### Download the binary
+
+* Go to the releases, and download the binary for the OS of your choice.
 * Place the binary somewhere on your `$PATH`.
 * Run it using `kubesecret help` to see what you can do with it.
 
@@ -22,7 +32,7 @@ We are making `kubesecret` to give team members a guided approach to performing 
 <summary>A note on windows support</summary>
 <p>
 
-While Windows support is currently not supported, we'll be taking care to try and not introduce patterns that exclude windows. We make no guarantees and you are free to run `node_modules/pkg/lib-es5/bin.js -t node10-win-x64` to get yourself a Windows binary and test things out. 
+While Windows support is currently not supported, we'll be taking care to try and not introduce patterns that exclude windows. We make no guarantees and you are free to run `node_modules/pkg/lib-es5/bin.js -t node10-win-x64` to get yourself a Windows binary and test things out.
 
 </p>
 </details>
@@ -33,3 +43,4 @@ While Windows support is currently not supported, we'll be taking care to try an
 * Run `npm install`. The tool is being developed using node `v10.x.x`
 * Code away
 * To test changes without building the binary run `node scripts/kubesecret.js`
+* Install it globally on your machine using `npm link`
