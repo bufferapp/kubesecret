@@ -47,7 +47,9 @@ While Windows support is currently not supported, we'll be taking care to try an
 
 ### Publish to npm
 
-Use `npm version` to update the version name, add a commit and tag that commit prior to publishing.
+Before updating the version in `package.json` ensure that the version showing in `scripts/kubesecret.js` has been updated to the desired version too. Failing to do this will cause `kubesecret -V` to not display the version correctly.
+
+Once `kubesecret.js` is updated, use `npm version` to update the version name, add a commit and tag that commit prior to publishing.
 For example:
 
 ```
