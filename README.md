@@ -1,5 +1,7 @@
 # Kubesecret - Safe kubernetes secret management
 
+[![npm package](https://img.shields.io/npm/v/@bufferapp/kubesecret)](https://www.npmjs.com/package/@bufferapp/kubesecret)
+
 ## Purpose and motivation
 
 Managing kubernetes secrets is a non standard process. Companies have many possible ways in which they can be managed. Sometimes though, a simple approach of `kubectl` is the most practical to reach out to.
